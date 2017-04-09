@@ -15,7 +15,7 @@ a database record and move it to permanent Shrine storage.
 
 ```rb
 class VideoUploader < Shrine
-  plugin :default_storage, cache: :tus # set Shrine::Storage::Tus as temporary storage
+  # ...
 end
 ```
 ```rb
@@ -38,11 +38,15 @@ gem "shrine-url", "~> 0.3" # dependency of Shrine::Storage::Tus
 ```rb
 require "shrine/storage/tus"
 
-Shrine.storages[:tus] = Shrine::Storage::Tus.new
+Shrine.storages = {
+  cache: Shrine::Storage::YourTemporaryStorage.new(...),
+  store: Shrine::Storage::YourPermanentStorage.new(...),
+  tus:   Shrine::Storage::Tus.new,
+}
 ```
 ```rb
 class VideoUploader < Shrine
-  plugin :default_storage, cache: :tus # set Shrine::Storage::Tus as temporary storage
+  storages[:cache] = storages[:tus] # set Shrine::Storage::Tus as temporary storage
 end
 ```
 
