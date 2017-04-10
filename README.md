@@ -83,6 +83,9 @@ class VideoUploader < Shrine
 end
 ```
 
+Note that this last approach doesn't use `Shrine::Storage::Tus`, so you don't
+need to add `shrine-url` to your Gemfile.
+
 For more details, and an explanation of pros and cons for each of the
 approaches, see [shrine-tus-demo].
 
