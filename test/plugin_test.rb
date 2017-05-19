@@ -35,6 +35,17 @@ describe Shrine::Plugins::Tus do
       assert_equal "#{tus_uid}.file", attachment.id
       assert_equal "bar",             attachment.metadata["foo"]
     end
+
+    it "does not add extra .file to the end of storage id" do
+      tus_uid = SecureRandom.hex
+      data = {id: "http://tus-server.org/files/#{tus_uid}.file", storage: "cache", metadata: {"foo" => "bar"}}
+
+      @attacher.assign(data.to_json)
+      attachment = @attacher.get
+
+      assert_equal "#{tus_uid}.file", attachment.id
+      assert_equal "bar",             attachment.metadata["foo"]
+    end
   end
 
   describe "for Gridfs" do
