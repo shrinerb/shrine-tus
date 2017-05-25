@@ -1,4 +1,5 @@
 require "json"
+require "uri"
 
 class Shrine
   module Plugins
@@ -7,7 +8,7 @@ class Shrine
         def assign(value)
           if value.is_a?(String) && value != ""
             data = JSON.parse(value)
-            data["id"] = tus_url_to_storage_id(data["id"], cache.storage)
+            data["id"] = tus_url_to_storage_id(data["id"], cache.storage) if URI.regexp =~ data["id"]
             super(data.to_json)
           else
             super

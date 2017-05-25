@@ -6,7 +6,6 @@ require "shrine/storage/gridfs"
 require "shrine/storage/s3"
 
 require "securerandom"
-require "stringio"
 require "tmpdir"
 
 describe Shrine::Plugins::Tus do
@@ -28,6 +27,17 @@ describe Shrine::Plugins::Tus do
     it "transforms tus URL to storage id" do
       tus_uid = SecureRandom.hex
       data = {id: "http://tus-server.org/files/#{tus_uid}", storage: "cache", metadata: {"foo" => "bar"}}
+
+      @attacher.assign(data.to_json)
+      attachment = @attacher.get
+
+      assert_equal "#{tus_uid}.file", attachment.id
+      assert_equal "bar",             attachment.metadata["foo"]
+    end
+
+    it "doesn't transform when file has already been transformed" do
+      tus_uid = SecureRandom.hex
+      data = {id: "#{tus_uid}.file", storage: "cache", metadata: {"foo" => "bar"}}
 
       @attacher.assign(data.to_json)
       attachment = @attacher.get
@@ -60,6 +70,17 @@ describe Shrine::Plugins::Tus do
       assert_equal id.to_s, attachment.id
       assert_equal "bar",   attachment.metadata["foo"]
     end
+
+    it "doesn't transform when file has already been transformed" do
+      id = BSON::ObjectId.new
+      data = {id: id.to_s, storage: "cache", metadata: {"foo" => "bar"}}
+
+      @attacher.assign(data.to_json)
+      attachment = @attacher.get
+
+      assert_equal id.to_s, attachment.id
+      assert_equal "bar",   attachment.metadata["foo"]
+    end
   end
 
   describe "for S3" do
@@ -76,6 +97,17 @@ describe Shrine::Plugins::Tus do
     it "transforms tus URL to storage id" do
       tus_uid = SecureRandom.hex
       data = {id: "http://tus-server.org/files/#{tus_uid}", storage: "cache", metadata: {"foo" => "bar"}}
+
+      @attacher.assign(data.to_json)
+      attachment = @attacher.get
+
+      assert_equal tus_uid, attachment.id
+      assert_equal "bar",   attachment.metadata["foo"]
+    end
+
+    it "doesn't transform when file has already been transformed" do
+      tus_uid = SecureRandom.hex
+      data = {id: tus_uid, storage: "cache", metadata: {"foo" => "bar"}}
 
       @attacher.assign(data.to_json)
       attachment = @attacher.get
