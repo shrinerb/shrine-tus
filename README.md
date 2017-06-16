@@ -33,9 +33,6 @@ The simplest setup is to have Shrine download the file uploaded to
 `Shrine::Storage::Tus` as the temporary Shrine storage.
 
 ```rb
-gem "shrine-url", "~> 0.3" # dependency of Shrine::Storage::Tus
-```
-```rb
 require "shrine/storage/tus"
 
 Shrine.storages = {
