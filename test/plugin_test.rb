@@ -31,8 +31,8 @@ describe Shrine::Plugins::Tus do
       @attacher.assign(data.to_json)
       attachment = @attacher.get
 
-      assert_equal "#{tus_uid}.file", attachment.id
-      assert_equal "bar",             attachment.metadata["foo"]
+      assert_equal tus_uid, attachment.id
+      assert_equal "bar",   attachment.metadata["foo"]
     end
 
     it "doesn't transform when file has already been transformed" do
