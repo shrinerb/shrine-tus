@@ -7,7 +7,7 @@ class Shrine
     class Tus < Url
       attr_reader :tus_storage
 
-      def initialize(downloader: :wget, tus_storage: nil)
+      def initialize(downloader: :net_http, tus_storage: nil)
         @tus_storage = tus_storage
 
         super(downloader: downloader)
@@ -48,7 +48,7 @@ class Shrine
         Down::ChunkedIO.new(
           size:     response.length,
           chunks:   response.each,
-          on_close: ->{response.close},
+          on_close: response.method(:close),
         )
       end
 
