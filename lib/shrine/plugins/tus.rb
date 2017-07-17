@@ -21,7 +21,7 @@ class Shrine
           tus_uid = tus_url.split("/").last
 
           if defined?(Storage::FileSystem) && storage.is_a?(Storage::FileSystem)
-            "#{tus_uid}.file"
+            tus_uid
           elsif defined?(Storage::Gridfs) && storage.is_a?(Storage::Gridfs)
             grid_info = storage.bucket.find(filename: tus_uid).limit(1).first
             grid_info[:_id].to_s
