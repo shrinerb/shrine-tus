@@ -141,6 +141,11 @@ class VideoUploader < Shrine
 end
 ```
 
+Note that it's **not** recommended to use the `delete_promoted` Shrine plugin
+with this this approach, because depending on the tus storage implementation
+it could cause HEAD requests to the tus server app to return a success for files
+that were deleted by Shrine.
+
 These are the performance advantages for each of the official storages:
 
 #### Filesystem
