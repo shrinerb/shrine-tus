@@ -10,7 +10,7 @@ require "stringio"
 
 describe Shrine::Storage::Tus do
   before do
-    @storage = Shrine::Storage::Tus.new(downloader: :down)
+    @storage = Shrine::Storage::Tus.new
   end
 
   describe "#upload" do
@@ -31,7 +31,7 @@ describe Shrine::Storage::Tus do
 
     it "downloads directly from tus storage" do
       tus_storage = Tus::Storage::Filesystem.new("#{Dir.tmpdir}/shrine")
-      @storage = Shrine::Storage::Tus.new(downloader: :down, tus_storage: tus_storage)
+      @storage = Shrine::Storage::Tus.new(tus_storage: tus_storage)
 
       tus_storage.create_file("8c295d6c83")
       tus_storage.patch_file("8c295d6c83", StringIO.new("file"))
@@ -52,7 +52,7 @@ describe Shrine::Storage::Tus do
 
     it "opens directly from tus storage" do
       tus_storage = Tus::Storage::Filesystem.new("#{Dir.tmpdir}/shrine")
-      @storage = Shrine::Storage::Tus.new(downloader: :down, tus_storage: tus_storage)
+      @storage = Shrine::Storage::Tus.new(tus_storage: tus_storage)
 
       tus_storage.create_file("8c295d6c83")
       tus_storage.patch_file("8c295d6c83", StringIO.new("file"))
