@@ -44,9 +44,10 @@ class Shrine
 
       def open_from_tus_storage(uid)
         response = get_tus_file(uid)
+        info     = get_tus_info(uid)
 
         Down::ChunkedIO.new(
-          size:     response.length,
+          size:     Integer(info["Upload-Length"]),
           chunks:   response.each,
           on_close: response.method(:close),
         )
@@ -54,6 +55,10 @@ class Shrine
 
       def get_tus_file(uid)
         tus_storage.get_file(uid)
+      end
+
+      def get_tus_info(uid)
+        tus_storage.read_info(uid)
       end
 
       def tus_uid(url)

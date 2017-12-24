@@ -14,7 +14,7 @@ Gem::Specification.new do |gem|
   gem.require_path = "lib"
 
   gem.add_dependency "shrine", "~> 2.0"
-  gem.add_dependency "tus-server", "~> 1.0"
+  gem.add_dependency "tus-server", "~> 2.0"
   gem.add_dependency "shrine-url", "~> 1.0"
 
   gem.add_development_dependency "rake"
