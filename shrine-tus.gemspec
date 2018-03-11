@@ -5,7 +5,7 @@ Gem::Specification.new do |gem|
   gem.required_ruby_version = ">= 2.1"
 
   gem.summary      = "Provides storage and plugin for easier integration between Shrine and tus-ruby-server."
-  gem.homepage     = "https://github.com/janko-m/shrine-tus"
+  gem.homepage     = "https://github.com/shrinerb/shrine-tus"
   gem.authors      = ["Janko Marohnić"]
   gem.email        = ["janko.marohnic@gmail.com"]
   gem.license      = "MIT"
