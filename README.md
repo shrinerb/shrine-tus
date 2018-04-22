@@ -4,8 +4,8 @@ Provides tools for integrating [Shrine] with [tus-ruby-server].
 
 ## Installation
 
-```ruby
-gem "shrine-tus"
+```rb
+gem "shrine-tus", "~> 1.0"
 ```
 
 ## Usage
@@ -49,12 +49,17 @@ To use this approach, you need to assign `Shrine::Storage::Tus` as your
 temporary storage:
 
 ```rb
+# Gemfile
+gem "http", "~> 3.2"
+```
+
+```rb
 require "shrine/storage/tus"
 
 Shrine.storages = {
   cache: Shrine::Storage::YourTemporaryStorage.new(...),
   store: Shrine::Storage::YourPermanentStorage.new(...),
-  tus:   Shrine::Storage::Tus.new,
+  tus:   Shrine::Storage::Tus.new(downloader: :http), # use the HTTP.rb gem
 }
 ```
 ```rb
@@ -64,10 +69,15 @@ end
 ```
 
 The `Shrine::Storage::Tus` class is a subclass of `Shrine::Storage::Url`, which
-uses [Down] for downloading. By default Down uses Ruby's built-in Net::HTTP as
-the backend for making download requests, however, for large files it might be
-more robust to use `wget` for downloading, as `wget` is able to automatically
-resume the download in case of temporary network failures.
+uses [Down] for downloading. By default, Down uses Ruby's built-in Net::HTTP as
+the backend for making download requests, however, Net::HTTP allocates a lot of
+memory (3x the size of the file it's downloading). That's not desirable when
+dealing with large files, so in the example above we switched to the Down
+backend based on [HTTP.rb], which allocates 10x less memory than Net::HTTP.
+
+If you're experiencing a lot of network hiccups while downloading, you might
+want to consider switching to the `Down::Wget` backend, as `wget` downloads
+are more reliable and automatically resume in case of network hiccups.
 
 ```rb
 Shrine::Storage::Tus.new(downloader: :wget)
@@ -184,5 +194,6 @@ $ bundle exec rake test
 [Shrine]: https://github.com/shrinerb/shrine
 [tus-ruby-server]: https://github.com/janko-m/tus-ruby-server
 [Down]: https://github.com/janko-m/down
+[HTTP.rb]: https://github.com/httprb/http
 [shrine-tus-demo]: https://github.com/shrinerb/shrine-tus-demo
 [tusd]: https://github.com/tus/tusd
