@@ -7,10 +7,10 @@ class Shrine
     class Tus < Url
       attr_reader :tus_storage
 
-      def initialize(downloader: :net_http, tus_storage: nil)
+      def initialize(tus_storage: nil, **options)
         @tus_storage = tus_storage
 
-        super(downloader: downloader)
+        super(**options)
       end
 
       def download(id)
@@ -66,10 +66,8 @@ class Shrine
       end
 
       # Add "Tus-Resumable" header to HEAD and DELETE requests.
-      def request(*args)
-        super do |req|
-          req["Tus-Resumable"] = "1.0.0"
-        end
+      def request(verb, url, **options)
+        super(verb, url, headers: { "Tus-Resumable" => "1.0.0" }, **options)
       end
     end
   end

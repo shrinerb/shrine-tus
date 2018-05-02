@@ -65,6 +65,13 @@ describe Shrine::Storage::Tus do
     end
   end
 
+  describe "#url" do
+    it "returns the given URL" do
+      assert_equal "http://tus-server.org/files/8c295d6c83",
+                   @storage.url("http://tus-server.org/files/8c295d6c83")
+    end
+  end
+
   describe "#exists?" do
     it "checks whether the remote file exists" do
       stub_request(:head, "http://tus-server.org/files/8c295d6c83")
@@ -75,13 +82,6 @@ describe Shrine::Storage::Tus do
 
       assert_requested(:head, "http://tus-server.org/files/8c295d6c83",
         headers: {"Tus-Resumable" => "1.0.0"})
-    end
-  end
-
-  describe "#url" do
-    it "returns the given URL" do
-      assert_equal "http://tus-server.org/files/8c295d6c83",
-                   @storage.url("http://tus-server.org/files/8c295d6c83")
     end
   end
 

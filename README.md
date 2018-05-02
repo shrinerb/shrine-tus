@@ -49,17 +49,12 @@ To use this approach, you need to assign `Shrine::Storage::Tus` as your
 temporary storage:
 
 ```rb
-# Gemfile
-gem "http", "~> 3.2"
-```
-
-```rb
 require "shrine/storage/tus"
 
 Shrine.storages = {
   cache: Shrine::Storage::YourTemporaryStorage.new(...),
   store: Shrine::Storage::YourPermanentStorage.new(...),
-  tus:   Shrine::Storage::Tus.new(downloader: :http), # use the HTTP.rb gem
+  tus:   Shrine::Storage::Tus.new
 }
 ```
 ```rb
@@ -68,16 +63,13 @@ class VideoUploader < Shrine
 end
 ```
 
-The `Shrine::Storage::Tus` class is a subclass of `Shrine::Storage::Url`, which
-uses [Down] for downloading. By default, Down uses Ruby's built-in Net::HTTP as
-the backend for making download requests, however, Net::HTTP allocates a lot of
-memory (3x the size of the file it's downloading). That's not desirable when
-dealing with large files, so in the example above we switched to the Down
-backend based on [HTTP.rb], which allocates 10x less memory than Net::HTTP.
+`Shrine::Storage::Tus` is a subclass of `Shrine::Storage::Url`, which uses
+[Down] for downloading. By default, the `Down::Http` backend is used, which is
+implemented using [HTTP.rb].
 
 If you're experiencing a lot of network hiccups while downloading, you might
-want to consider switching to the `Down::Wget` backend, as `wget` downloads
-are more reliable and automatically resume in case of network hiccups.
+want to consider switching to the `Down::Wget` backend, as `wget` automatically
+resumes the download in case of network hiccups.
 
 ```rb
 Shrine::Storage::Tus.new(downloader: :wget)
