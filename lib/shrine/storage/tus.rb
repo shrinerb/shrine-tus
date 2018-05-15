@@ -13,7 +13,7 @@ class Shrine
         super(**options)
       end
 
-      def download(id)
+      def download(id, **options)
         if tus_storage
           download_from_tus_storage(tus_uid(id))
         else
@@ -21,7 +21,7 @@ class Shrine
         end
       end
 
-      def open(id)
+      def open(id, **options)
         if tus_storage
           open_from_tus_storage(tus_uid(id))
         else

@@ -29,6 +29,15 @@ describe Shrine::Storage::Tus do
       assert_equal "file", tempfile.read
     end
 
+    it "forwards additional options to Url#download" do
+      stub_request(:get, "http://tus-server.org/files/8c295d6c83")
+        .with(headers: { "Foo" => "Bar" })
+        .to_return(body: "file")
+
+      tempfile = @storage.download("http://tus-server.org/files/8c295d6c83", headers: { "Foo" => "Bar" })
+      assert_equal "file", tempfile.read
+    end
+
     it "downloads directly from tus storage" do
       tus_storage = Tus::Storage::Filesystem.new("#{Dir.tmpdir}/shrine")
       @storage = Shrine::Storage::Tus.new(tus_storage: tus_storage)
@@ -47,6 +56,15 @@ describe Shrine::Storage::Tus do
       stub_request(:get, "http://tus-server.org/files/8c295d6c83").to_return(body: "file")
       io = @storage.open("http://tus-server.org/files/8c295d6c83")
       assert_instance_of Down::ChunkedIO, io
+      assert_equal "file", io.read
+    end
+
+    it "forwards additional options to Url#open" do
+      stub_request(:get, "http://tus-server.org/files/8c295d6c83")
+        .with(headers: { "Foo" => "Bar" })
+        .to_return(body: "file")
+
+      io = @storage.open("http://tus-server.org/files/8c295d6c83", headers: { "Foo" => "Bar" })
       assert_equal "file", io.read
     end
 
