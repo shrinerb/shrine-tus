@@ -35,7 +35,10 @@ class Shrine
         tempfile = Tempfile.new("shrine-tus", binmode: true)
 
         response = get_tus_file(uid)
-        response.each { |chunk| tempfile << chunk }
+        response.each do |chunk|
+          tempfile << chunk
+          chunk.clear # deallocate string
+        end
         response.close
 
         tempfile.open
