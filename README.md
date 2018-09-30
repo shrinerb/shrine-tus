@@ -37,6 +37,75 @@ Movie.create(video: file_data)
 
 See [shrine-tus-demo] for an example application that uses shrine-tus.
 
+### Metadata
+
+Before we go into the implementation, there is an important caveat about
+metadata extraction.
+
+By default Shrine won't try to extract metadata from files that were uploaded
+directly, because that would require (at least partially) retrieving file
+content from the storage, which could be potentially expensive depending on the
+storage and the kind of metadata that are being extracted. For example, when
+using disk storage the performance penalty would be minimal, but with S3
+storage there will be a HTTP download. If you're only using the
+`determine_mime_type` plugin, then this impact will be minimal as only the
+first few kilobytes will actualy be downloaded, but if you're doing your own
+metadata extraction you'll likely be downloading the whole file.
+
+That being said, you can still tell Shrine to extract metadata. If you want it
+to be done automatically on assignment (which is useful if you want to validate
+the extracted metadata), you can load the `restore_cached_data` plugin:
+
+```rb
+Shrine.plugin :restore_cached_data
+```
+
+On the other hand, if you're using backgrounding and don't need to validate the
+extracted metadata, you can extract metadata during background promotion using
+the `refresh_metadata` plugin (which the `restore_cached_data` plugin uses
+internally):
+
+```rb
+Shrine.plugin :refresh_metadata
+```
+```rb
+class MyUploader < Shrine
+  plugin :processing
+
+  process(:store) do |io, context|
+    io.tap(&:refresh_metadata!)
+  end
+end
+```
+
+Alternatively, if you have metadata that can be cheaply extracted in the
+foreground (such as MIME type), but there is also metadata that you want
+extracted asynchronously, you can combine the two approaches:
+
+```rb
+Shrine.plugin :restore_cached_data
+```
+```rb
+class MyUploader < Shrine
+  plugin :processing
+
+  process(:store) do |io, context|
+    additional_metadata = io.download do |file|
+      movie = FFMPEG::Movie.new(file.path)
+
+      { "duration"   => movie.duration,
+        "bitrate"    => movie.bitrate,
+        "resolution" => movie.resolution,
+        "frame_rate" => movie.frame_rate }
+    end
+
+    io.metadata.merge!(additional_metadata)
+
+    io
+  end
+end
+```
+
 ### Approach A: Downloading through tus server
 
 Conceptionally the simplest setup is to have Shrine download the uploaded file
