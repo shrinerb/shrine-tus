@@ -97,7 +97,7 @@ class MyUploader < Shrine
   process(:store) do |io, context|
     additional_metadata = io.download do |file|
       # example of metadata extraction
-      movie = FFMPEG::Movie.new(file.path)
+      movie = FFMPEG::Movie.new(file.path) # uses the streamio-ffmpeg gem
 
       { "duration"   => movie.duration,
         "bitrate"    => movie.bitrate,
