@@ -47,7 +47,7 @@ directly, because that would require (at least partially) retrieving file
 content from the storage, which could be potentially expensive depending on the
 storage and the kind of metadata that are being extracted. For example, when
 using disk storage the performance penalty would be minimal, but with S3
-storage there will be a HTTP download. If you're only using the
+storage there will be an HTTP download. If you're only using the
 `determine_mime_type` plugin, then this impact will be minimal as only the
 first few kilobytes will actualy be downloaded, but if you're doing your own
 metadata extraction you'll likely be downloading the whole file.
@@ -72,6 +72,7 @@ Shrine.plugin :refresh_metadata
 class MyUploader < Shrine
   plugin :processing
 
+  # this will be called in the background if using backgrounding plugin
   process(:store) do |io, context|
     io.tap(&:refresh_metadata!)
   end
@@ -80,17 +81,22 @@ end
 
 Alternatively, if you have metadata that can be cheaply extracted in the
 foreground (such as MIME type), but there is also metadata that you want
-extracted asynchronously, you can combine the two approaches:
+extracted asynchronously, you can combine the two approaches. Here is an
+example of extracting additional video metadata in the background (provided
+the `backgrounding` plugin is used):
 
 ```rb
 Shrine.plugin :restore_cached_data
 ```
 ```rb
 class MyUploader < Shrine
+  plugin :determine_mime_type # this will be called in the foreground
   plugin :processing
 
+  # this will be called in the background if using backgrounding plugin
   process(:store) do |io, context|
     additional_metadata = io.download do |file|
+      # example of metadata extraction
       movie = FFMPEG::Movie.new(file.path)
 
       { "duration"   => movie.duration,
