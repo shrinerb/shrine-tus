@@ -37,10 +37,10 @@ Movie.create(video: file_data)
 
 See [shrine-tus-demo] for an example application that uses shrine-tus.
 
-NOTE: By default **Shrine won't extract metadata from directly upload files**,
-instead it will just copy metadata that was extracted on the client side. See
-[this section][metadata direct uploads] for the rationale and instructions on
-how to opt in.
+Note that by default **Shrine won't extract metadata from directly upload
+files**, instead it will just copy metadata that was extracted on the client
+side. See [this section][metadata direct uploads] for the rationale and
+instructions on how to opt in.
 
 ### Approach A: Downloading through tus server
 
