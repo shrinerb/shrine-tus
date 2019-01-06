@@ -10,7 +10,7 @@ class Shrine
       def initialize(tus_storage: nil, **options)
         @tus_storage = tus_storage
 
-        super(**options)
+        super(delete: true, **options)
       end
 
       def download(id, **options)

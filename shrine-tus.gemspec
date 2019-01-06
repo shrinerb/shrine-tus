@@ -15,7 +15,7 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency "shrine", "~> 2.0"
   gem.add_dependency "tus-server", "~> 2.0"
-  gem.add_dependency "shrine-url", "~> 2.1"
+  gem.add_dependency "shrine-url", ">= 2.2.1", "< 3"
 
   gem.add_development_dependency "rake"
   gem.add_development_dependency "minitest"
