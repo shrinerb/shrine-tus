@@ -5,7 +5,7 @@ class Shrine
   module Plugins
     module Tus
       module AttacherMethods
-        def assign(value)
+        def assign(value, **options)
           if value.is_a?(String) && value != ""
             data = JSON.parse(value)
             data["id"] = tus_url_to_storage_id(data["id"], cache.storage) if URI.regexp =~ data["id"]
