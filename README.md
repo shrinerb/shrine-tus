@@ -189,8 +189,8 @@ $ bundle exec rake test
 [MIT](/LICENSE.txt)
 
 [Shrine]: https://github.com/shrinerb/shrine
-[tus-ruby-server]: https://github.com/janko-m/tus-ruby-server
-[Down]: https://github.com/janko-m/down
+[tus-ruby-server]: https://github.com/janko/tus-ruby-server
+[Down]: https://github.com/janko/down
 [HTTP.rb]: https://github.com/httprb/http
 [shrine-tus-demo]: https://github.com/shrinerb/shrine-tus-demo
 [tusd]: https://github.com/tus/tusd
