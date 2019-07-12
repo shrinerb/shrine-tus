@@ -81,7 +81,7 @@ describe Shrine::Plugins::Tus do
       assert_equal id.to_s, attachment.id
       assert_equal "bar",   attachment.metadata["foo"]
     end
-  end
+  end if ENV["MONGO"]
 
   describe "for S3" do
     before do
