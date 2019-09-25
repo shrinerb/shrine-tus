@@ -51,6 +51,20 @@ describe Shrine::Storage::Tus do
       assert_equal 4,      io.size
       assert_equal "file", io.read
     end
+
+    it "accepts :rewindable with tus storage" do
+      tus_storage = Tus::Storage::Filesystem.new("#{Dir.tmpdir}/shrine")
+      @storage = Shrine::Storage::Tus.new(tus_storage: tus_storage)
+
+      tus_storage.create_file("8c295d6c83")
+      tus_storage.update_info("8c295d6c83", { "Upload-Length" => "4" })
+      tus_storage.patch_file("8c295d6c83", StringIO.new("file"))
+      io = @storage.open("http://tus-server.org/files/8c295d6c83", rewindable: false)
+
+      assert_raises IOError do
+        io.rewind
+      end
+    end
   end
 
   describe "#url" do

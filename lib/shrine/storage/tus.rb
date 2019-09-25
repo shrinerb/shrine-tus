@@ -15,7 +15,7 @@ class Shrine
 
       def open(id, **options)
         if tus_storage
-          open_from_tus_storage(tus_uid(id))
+          open_from_tus_storage(tus_uid(id), **options)
         else
           super
         end
@@ -23,14 +23,15 @@ class Shrine
 
       private
 
-      def open_from_tus_storage(uid)
+      def open_from_tus_storage(uid, rewindable: true, **)
         response = get_tus_file(uid)
         info     = get_tus_info(uid)
 
         Down::ChunkedIO.new(
-          size:     Integer(info["Upload-Length"]),
-          chunks:   response.each,
-          on_close: response.method(:close),
+          size:       Integer(info["Upload-Length"]),
+          chunks:     response.each,
+          on_close:   response.method(:close),
+          rewindable: rewindable
         )
       end
 
