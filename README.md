@@ -5,7 +5,7 @@ Provides tools for integrating [Shrine] with [tus-ruby-server].
 ## Installation
 
 ```rb
-gem "shrine-tus", "~> 1.2"
+gem "shrine-tus", "~> 2.0"
 ```
 
 ## Usage
