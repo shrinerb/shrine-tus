@@ -12,10 +12,8 @@ describe Shrine::Plugins::Tus do
   def attacher(storage)
     shrine_class = Class.new(Shrine)
     shrine_class.storages[:cache] = storage
-    shrine_class.storages[:store] = storage
     shrine_class.plugin :tus
-    record = Struct.new(:attachment_data).new
-    shrine_class::Attacher.new(record, :attachment)
+    shrine_class::Attacher.new
   end
 
   describe "for FileSystem" do
@@ -26,24 +24,32 @@ describe Shrine::Plugins::Tus do
 
     it "transforms tus URL to storage id" do
       tus_uid = SecureRandom.hex
-      data = {id: "http://tus-server.org/files/#{tus_uid}", storage: "cache", metadata: {"foo" => "bar"}}
+      data    = {
+        id:       "http://tus-server.org/files/#{tus_uid}",
+        storage:  :cache,
+        metadata: { "foo" => "bar" },
+      }
 
-      @attacher.assign(data.to_json)
-      attachment = @attacher.get
+      @attacher.assign(data)
 
-      assert_equal tus_uid, attachment.id
-      assert_equal "bar",   attachment.metadata["foo"]
+      assert_equal tus_uid, @attacher.file.id
+      assert_equal "bar",   @attacher.file.metadata["foo"]
+      assert_equal :cache,  @attacher.file.storage_key
     end
 
     it "doesn't transform when file has already been transformed" do
       tus_uid = SecureRandom.hex
-      data = {id: "#{tus_uid}.file", storage: "cache", metadata: {"foo" => "bar"}}
+      data    = {
+        id:       tus_uid,
+        storage:  :cache,
+        metadata: { "foo" => "bar" },
+      }
 
-      @attacher.assign(data.to_json)
-      attachment = @attacher.get
+      @attacher.assign(data)
 
-      assert_equal "#{tus_uid}.file", attachment.id
-      assert_equal "bar",             attachment.metadata["foo"]
+      assert_equal tus_uid, @attacher.file.id
+      assert_equal "bar",   @attacher.file.metadata["foo"]
+      assert_equal :cache,  @attacher.file.storage_key
     end
   end
 
@@ -60,26 +66,36 @@ describe Shrine::Plugins::Tus do
 
     it "transforms tus URL to storage id" do
       tus_uid = SecureRandom.hex
-      id = BSON::ObjectId.new
+      id      = BSON::ObjectId.new
+
       @storage.bucket.files_collection.insert_one(_id: id, filename: tus_uid)
-      data = {id: "http://tus-server.org/files/#{tus_uid}", storage: "cache", metadata: {"foo" => "bar"}}
 
-      @attacher.assign(data.to_json)
-      attachment = @attacher.get
+      data = {
+        id:       "http://tus-server.org/files/#{tus_uid}",
+        storage:  :cache,
+        metadata: { "foo" => "bar" },
+      }
 
-      assert_equal id.to_s, attachment.id
-      assert_equal "bar",   attachment.metadata["foo"]
+      @attacher.assign(data)
+
+      assert_equal id.to_s, @attacher.file.id
+      assert_equal "bar",   @attacher.file.metadata["foo"]
+      assert_equal :cache,  @attacher.file.storage_key
     end
 
     it "doesn't transform when file has already been transformed" do
-      id = BSON::ObjectId.new
-      data = {id: id.to_s, storage: "cache", metadata: {"foo" => "bar"}}
+      id   = BSON::ObjectId.new
+      data = {
+        id:       id.to_s,
+        storage:  :cache,
+        metadata: { "foo" => "bar" }
+      }
 
-      @attacher.assign(data.to_json)
-      attachment = @attacher.get
+      @attacher.assign(data)
 
-      assert_equal id.to_s, attachment.id
-      assert_equal "bar",   attachment.metadata["foo"]
+      assert_equal id.to_s, @attacher.file.id
+      assert_equal "bar",   @attacher.file.metadata["foo"]
+      assert_equal :cache,  @attacher.file.storage_key
     end
   end if ENV["MONGO"]
 
@@ -96,24 +112,32 @@ describe Shrine::Plugins::Tus do
 
     it "transforms tus URL to storage id" do
       tus_uid = SecureRandom.hex
-      data = {id: "http://tus-server.org/files/#{tus_uid}", storage: "cache", metadata: {"foo" => "bar"}}
+      data    = {
+        id:       "http://tus-server.org/files/#{tus_uid}",
+        storage:  :cache,
+        metadata: { "foo" => "bar" },
+      }
 
-      @attacher.assign(data.to_json)
-      attachment = @attacher.get
+      @attacher.assign(data)
 
-      assert_equal tus_uid, attachment.id
-      assert_equal "bar",   attachment.metadata["foo"]
+      assert_equal tus_uid, @attacher.file.id
+      assert_equal "bar",   @attacher.file.metadata["foo"]
+      assert_equal :cache,  @attacher.file.storage_key
     end
 
     it "doesn't transform when file has already been transformed" do
       tus_uid = SecureRandom.hex
-      data = {id: tus_uid, storage: "cache", metadata: {"foo" => "bar"}}
+      data    = {
+        id:       tus_uid,
+        storage:  :cache,
+        metadata: { "foo" => "bar" },
+      }
 
-      @attacher.assign(data.to_json)
-      attachment = @attacher.get
+      @attacher.assign(data)
 
-      assert_equal tus_uid, attachment.id
-      assert_equal "bar",   attachment.metadata["foo"]
+      assert_equal tus_uid, @attacher.file.id
+      assert_equal "bar",   @attacher.file.metadata["foo"]
+      assert_equal :cache,  @attacher.file.storage_key
     end
   end
 end

@@ -5,17 +5,19 @@ class Shrine
   module Plugins
     module Tus
       module AttacherMethods
-        def assign(value, **options)
-          if value.is_a?(String) && value != ""
-            data = JSON.parse(value)
-            data["id"] = tus_url_to_storage_id(data["id"], cache.storage) if URI.regexp =~ data["id"]
-            super(data.to_json)
-          else
-            super
-          end
-        end
-
         private
+
+        def cached(data)
+          data = data.dup
+          data = JSON.parse(data) if data.is_a?(String)
+
+          if URI.regexp =~ (data["id"] || data[:id])
+            id         = data.delete("id") || data.delete(:id)
+            data["id"] = tus_url_to_storage_id(id, cache.storage)
+          end
+
+          super(data)
+        end
 
         def tus_url_to_storage_id(tus_url, storage)
           tus_uid = tus_url.split("/").last
