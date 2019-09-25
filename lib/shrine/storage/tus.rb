@@ -13,14 +13,6 @@ class Shrine
         super(delete: true, **options)
       end
 
-      def download(id, **options)
-        if tus_storage
-          download_from_tus_storage(tus_uid(id))
-        else
-          super
-        end
-      end
-
       def open(id, **options)
         if tus_storage
           open_from_tus_storage(tus_uid(id))
@@ -30,20 +22,6 @@ class Shrine
       end
 
       private
-
-      def download_from_tus_storage(uid)
-        tempfile = Tempfile.new("shrine-tus", binmode: true)
-
-        response = get_tus_file(uid)
-        response.each do |chunk|
-          tempfile << chunk
-          chunk.clear # deallocate string
-        end
-        response.close
-
-        tempfile.open
-        tempfile
-      end
 
       def open_from_tus_storage(uid)
         response = get_tus_file(uid)
