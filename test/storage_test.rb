@@ -65,6 +65,15 @@ describe Shrine::Storage::Tus do
         io.rewind
       end
     end
+
+    it "raises Shrine::FileNotFound on missing file" do
+      tus_storage = Tus::Storage::Filesystem.new("#{Dir.tmpdir}/shrine")
+      @storage = Shrine::Storage::Tus.new(tus_storage: tus_storage)
+
+      assert_raises Shrine::FileNotFound do
+        @storage.open("nonexisting")
+      end
+    end
   end
 
   describe "#url" do

@@ -14,24 +14,24 @@ class Shrine
       end
 
       def open(id, **options)
-        if tus_storage
-          open_from_tus_storage(tus_uid(id), **options)
-        else
-          super
-        end
+        return super unless tus_storage
+
+        open_from_tus_storage(tus_uid(id), **options)
+      rescue ::Tus::NotFound
+        raise Shrine::FileNotFound, "file #{id.inspect} not found on storage"
       end
 
       private
 
       def open_from_tus_storage(uid, rewindable: true, **)
-        response = get_tus_file(uid)
         info     = get_tus_info(uid)
+        response = get_tus_file(uid)
 
         Down::ChunkedIO.new(
           size:       Integer(info["Upload-Length"]),
           chunks:     response.each,
           on_close:   response.method(:close),
-          rewindable: rewindable
+          rewindable: rewindable,
         )
       end
 
