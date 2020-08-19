@@ -22,6 +22,16 @@ describe Shrine::Plugins::Tus do
       @attacher = attacher(@storage)
     end
 
+    it "accepts assign options" do
+      tus_uid = SecureRandom.hex
+      data    = {
+        id:       "http://tus-server.org/files/#{tus_uid}",
+        storage:  :cache,
+        metadata: { "foo" => "bar" },
+      }
+      @attacher.assign(data, foo: :bar)
+    end
+
     it "transforms tus URL to storage id" do
       tus_uid = SecureRandom.hex
       data    = {
