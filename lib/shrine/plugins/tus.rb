@@ -7,7 +7,7 @@ class Shrine
       module AttacherMethods
         private
 
-        def cached(data)
+        def cached(data, **options)
           data = data.dup
           data = JSON.parse(data) if data.is_a?(String)
 
@@ -16,7 +16,7 @@ class Shrine
             data["id"] = tus_url_to_storage_id(id, cache.storage)
           end
 
-          super(data)
+          super(data, **options)
         end
 
         def tus_url_to_storage_id(tus_url, storage)
