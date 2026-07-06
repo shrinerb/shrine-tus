@@ -1,6 +1,6 @@
 Gem::Specification.new do |gem|
   gem.name          = "shrine-tus"
-  gem.version       = "2.1.1"
+  gem.version       = "3.0.0"
 
   gem.required_ruby_version = ">= 2.1"
 
