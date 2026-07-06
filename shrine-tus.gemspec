@@ -14,7 +14,6 @@ Gem::Specification.new do |gem|
   gem.require_path = "lib"
 
   gem.add_dependency "shrine",     "~> 3.2"
-  gem.add_dependency "tus-server", "~> 2.0"
   gem.add_dependency "shrine-url", "~> 2.4"
 
   gem.add_development_dependency "rake"
@@ -22,4 +21,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "webmock"
   gem.add_development_dependency "shrine-gridfs", "~> 1.0"
   gem.add_development_dependency "aws-sdk-s3", "~> 1.14"
+  gem.add_development_dependency "tus-server", "~> 2.0"
 end

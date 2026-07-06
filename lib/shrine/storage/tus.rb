@@ -17,11 +17,18 @@ class Shrine
         return super unless tus_storage
 
         open_from_tus_storage(tus_uid(id), **options)
-      rescue ::Tus::NotFound
+      rescue => error
+        raise error unless tus_not_found?(error)
         raise Shrine::FileNotFound, "file #{id.inspect} not found on storage"
       end
 
       private
+
+      # Avoids a hard dependency on the tus-server gem, which defines the
+      # Tus::NotFound exception raised by tus storages on a missing file.
+      def tus_not_found?(error)
+        defined?(::Tus::NotFound) && error.is_a?(::Tus::NotFound)
+      end
 
       def open_from_tus_storage(uid, rewindable: true, **)
         info     = get_tus_info(uid)
